@@ -3,7 +3,7 @@ ifeq ($(platform),windows)
 else ifeq ($(platform),macos)
 else ifneq ($(filter $(platform),linux bsd),)
   options += -Wl,-export-dynamic
-  options += -lX11 -lXext
+  options += -lX11 -lXext -lslirp -lenet
 else
   $(error "ares is a library and cannot be built directly.")
 endif

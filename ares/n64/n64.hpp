@@ -10,6 +10,11 @@
 #include <nall/queue.hpp>
 #include <nall/recompiler/generic/generic.hpp>
 #include <component/processor/sm5k/sm5k.hpp>
+#include <slirp/libslirp.h>
+#include <enet/enet.h>
+
+#include <thread>
+#include <functional>
 
 #if defined(ARCHITECTURE_AMD64)
 #include <nmmintrin.h>
@@ -96,5 +101,6 @@ namespace ares::Nintendo64 {
   #include <n64/rsp/rsp.hpp>
   #include <n64/rdp/rdp.hpp>
   #include <n64/memory/bus.hpp>
+  #include <n64/usbdebug.hpp>
   #include <n64/pi/bus.hpp>
 }

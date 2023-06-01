@@ -1,7 +1,7 @@
 struct Cartridge {
   Node::Peripheral node;
   VFS::Pak pak;
-  Memory::Readable16 rom;
+  Memory::Writable16 rom;
   Memory::Writable16 ram;
   Memory::Writable16 eeprom;
   struct Flash : Memory::Writable {

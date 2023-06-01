@@ -47,6 +47,19 @@ inline auto PI::busRead(u32 address) -> u32 {
     return unmapped;
   }
   if(address <= 0x13ff'ffff) return cartridge.isviewer.read<Size>(address);
+  if(address >= 0x1FFF0000 && address < 0x1FFF0010) { // SC64
+    switch (address) {
+      case SC64_REG_CFG_VERSION: return SC64_VERSION;
+      case SC64_REG_CFG_SR_CMD: return sc64.sr;
+      case SC64_REG_CFG_DATA_0: {
+        return sc64.data[0];
+      }
+      case SC64_REG_CFG_DATA_1: {
+        return sc64.data[1];
+      }
+      default: break;
+    }
+  }
   if(address <= 0x7fff'ffff) return unmapped;
   return unmapped; //accesses here actually lock out the RCP
 }
@@ -92,6 +105,10 @@ inline auto PI::busWrite(u32 address, u32 data) -> void {
     if(cartridge.flash) return cartridge.flash.write<Size>(address, data);
     return;
   }
+  // if(sc64.config.sdramWritable && (address >=SC64_SDRAM_BASE + USB_DEBUG_ADDRESS) && (address + USB_DEBUG_ADDRESS_SIZE <= SC64_SDRAM_BASE + USB_DEBUG_ADDRESS + USB_DEBUG_ADDRESS_SIZE)) {
+  //   // likely homebrew writing to sc64 usb
+
+  // }
   if(address <= 0x13fe'ffff) {
     if(cartridge.rom  ) return cartridge.rom.write<Size>(address, data);
     return;
@@ -99,6 +116,22 @@ inline auto PI::busWrite(u32 address, u32 data) -> void {
   if(address <= 0x13ff'ffff) {
     writeForceFinish(); //Debugging channel for homebrew, be gentle
     return cartridge.isviewer.write<Size>(address, data);
+  }
+  if(address >= 0x1FFF0000 && address < 0x1FFF0010) { // SC64
+    switch (address) {
+      case SC64_REG_CFG_SR_CMD: {
+        sc64.cmd = data;
+        sc64.PerformCmd();
+        break;
+      }
+      case SC64_REG_CFG_DATA_0: {
+        sc64.data[0] = data; break;
+      }
+      case SC64_REG_CFG_DATA_1: {
+        sc64.data[1] = data; break;
+      }
+      default: break;
+    }
   }
   if(address <= 0x7fff'ffff) return;
 }
