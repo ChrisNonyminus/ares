@@ -141,7 +141,7 @@ struct SC64
             if (rxready)
             {
                 data[0] = htobe32(rxdata[0] | (rxbusy ? (1 << 31) : 0));
-                data[1] = htobe32(rxdata[1]);
+                data[1] = (rxdata[1]);
                 rxready = false;
             }
             rxdata[0] = 0;
@@ -377,7 +377,7 @@ struct SC64
                     break;
                 }
                 case NETTYPE_TEXT: {
-                    printf("network_printf: %s\n", (const char*)&tmp[0]);
+                    //printf("network_printf: %s\n", (const char*)&tmp[0]);
                     break;
                 }
                 default:
