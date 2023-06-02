@@ -24,10 +24,10 @@ auto Cartridge::connect() -> void {
   information.cic    = pak->attribute("cic");
 
   if(auto fp = pak->read("program.rom")) {
-    rom.allocate(fp->size());
+    rom.allocate(64_MiB);//fp->size());
     rom.load(fp);
   } else {
-    rom.allocate(16);
+    rom.allocate(64_MiB);
   }
 
   if(auto fp = pak->read("save.ram")) {
