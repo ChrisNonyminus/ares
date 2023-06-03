@@ -121,6 +121,8 @@ struct SC64
 
         static u32 rxdata[2];
 
+        static std::atomic_bool sending = false;
+
         // printf("Performing SC64 cmd %d\n", cmd);
 
         switch (cmd)
@@ -226,8 +228,9 @@ struct SC64
                             while (true)
                             {
                                 while (enet_host_service(enetHost, &enetEvent,
-                                                         1000))
+                                                         0))
                                 {
+                                    while (sending) {}
                                     switch (enetEvent.type)
                                     {
 
@@ -320,8 +323,9 @@ struct SC64
                             while (true)
                             {
                                 while (enet_host_service(enetHost, &enetEvent,
-                                                         1000))
+                                                         0))
                                 {
+                                    while (sending) {}
                                     switch (enetEvent.type)
                                     {
 
@@ -366,16 +370,11 @@ struct SC64
                     if (!enetHost) {
                         return;
                     }
-                    if (!enetPeer) {
+                    sending = true;
                         enet_host_broadcast(enetHost, 0, packet);
-                        // assume we're the server
-                        enet_host_flush(enetHost);
-                        return;
-                    } else {
-
-                        enet_peer_send(enetPeer, 0, packet);
-                        enet_host_flush(enetHost);
-                    }
+                        //enet_host_flush(enetHost);
+                        sending = false;
+                    return;
                     break;
                 }
                 case NETTYPE_TEXT: {
