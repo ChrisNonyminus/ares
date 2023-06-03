@@ -371,9 +371,11 @@ struct SC64
                         // assume we're the server
                         enet_host_flush(enetHost);
                         return;
+                    } else {
+
+                        enet_peer_send(enetPeer, 0, packet);
+                        enet_host_flush(enetHost);
                     }
-                    enet_peer_send(enetPeer, 0, packet);
-                    enet_host_flush(enetHost);
                     break;
                 }
                 case NETTYPE_TEXT: {
